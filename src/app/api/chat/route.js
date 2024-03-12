@@ -9,7 +9,7 @@ const openai = new OpenAI({
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
-  baseURL: "https://claude.fetch-gpt.com/"
+  // baseURL: "https://claude.fetch-gpt.com/"
 })
 
 const encoder = new TextEncoder();
