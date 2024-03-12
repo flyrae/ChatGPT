@@ -1,8 +1,15 @@
 import OpenAI from 'openai';
+import Anthropic from "@anthropic-ai/sdk";
+import { AnthropicStream, StreamingTextResponse } from 'ai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
-  baseURL:"http://fetch-gpt.com/"
+  baseURL:"https://fetch-gpt.com/v1/"
+})
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY || '',
+  baseURL: "https://claude.fetch-gpt.com/"
 })
 
 const encoder = new TextEncoder();
@@ -28,7 +35,7 @@ function sleep(time){
 }
 
 
-async function* makeIterator(){
+async function* makeIterator(response){
   for await(const chunk of response){
     const delta = chunk.choices[0].delta.content
     yield encoder.encode(delta);
@@ -49,12 +56,32 @@ export async function GET(){
   return new Response(stream);
 }
 
+// export async function POST(request){
+//   const {messages} = await request.json();
+//   // const responseOpen = await openai.chat.completions.create({
+//   //   model: 'gpt-3.5-turbo',
+//   //   messages,
+//   //   stream:true
+//   // })
+//   const response = await anthropic.messages.create({
+//     model: "claude-3-opus-20240229",
+//     max_tokens: 1024,
+//     stream:true,
+//     messages
+//   })
+//   return new Response(response);
+  
+//   // return new Response(iteratorToStream(makeIterator(response)));
+// }
+
 export async function POST(request){
   const {messages} = await request.json();
-  const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+  const response = await anthropic.messages.create({
     messages,
-    stream:true
-  })
-  return new Response(iteratorToStream(makeIterator(response)));
+    model:"claude-3-opus-20240229",
+    stream:true,
+    max_tokens:1024
+  });
+  const stream = AnthropicStream(response);
+  return new StreamingTextResponse(stream);
 }
