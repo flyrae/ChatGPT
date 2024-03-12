@@ -13,7 +13,7 @@ export default function Chat() {
     <div className="flex flex-col w-full max-w-md py-24 max-auto stretch">
       {messages.map(m => (
         <div key={m.id}>
-          {m.role === 'user' ? 'User: ' : 'Claude3: '}
+          {m.role === 'user' ? 'User: ' : 'opus: '}
           {m.content}
         </div>
       ))}
@@ -22,7 +22,7 @@ export default function Chat() {
         <input
          className="fixed bottom-0 w-full -max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
           value={input}
-          placeholder="Say something..."
+          placeholder="输入问题"
 
           onChange={handleInputChange}
         />
