@@ -80,7 +80,7 @@ export async function POST(request){
     messages,
     model:"claude-3-opus-20240229",
     stream:true,
-    max_tokens:1024
+    max_tokens:8192
   });
   const stream = AnthropicStream(response);
   return new StreamingTextResponse(stream);
